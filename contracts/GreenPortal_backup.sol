@@ -6,9 +6,8 @@ import "hardhat/console.sol";
 
 // import "../node_modules/hardhat/console.sol";
 
-contract GreenPortal {
+contract GreenPortal_Backup {
     uint256 totalGreens;
-    bool hasWon=false;
 
     /*
      * We will be using this below to help generate a random number
@@ -18,7 +17,7 @@ contract GreenPortal {
     /*
      * A little magic, Google what events are in Solidity!
      */
-    event NewGreen(address indexed from, uint256 timestamp, string message, bool winner);
+    event NewGreen(address indexed from, uint256 timestamp, string message);
 
     /*
      * I created a struct here named Wave.
@@ -28,7 +27,6 @@ contract GreenPortal {
         address greenSender; // The address of the user who waved.
         string message; // The message the user sent.
         uint256 timestamp; // The timestamp when the user waved.
-        bool winner; // The message the user sent.
     }
 
     /*
@@ -78,6 +76,10 @@ contract GreenPortal {
         );
 
         /*
+         * This is where I actually store the wave data in the array.
+         */
+        greens.push(Green(msg.sender, _message, block.timestamp));
+        /*
          * Generate a new seed for the next user that sends a wave
          */
         seed = (block.difficulty + block.timestamp + seed) % 100;
@@ -89,7 +91,7 @@ contract GreenPortal {
          */
         if (seed <= 50) {
             console.log("%s won!", msg.sender);
-            hasWon = true;
+
             /*
              * The same code we had before to send the prize.
              */
@@ -101,15 +103,12 @@ contract GreenPortal {
             (bool success, ) = (msg.sender).call{value: prizeAmount}("");
             require(success, "Failed to withdraw money from contract.");
         }
-        /*
-         * This is where I actually store the wave data in the array.
-         */
-        greens.push(Green(msg.sender, _message, block.timestamp, hasWon));
+
         /*
          * I added some fanciness here, Google it and try to figure out what it is!
          * Let me know what you learn in #general-chill-chat
          */
-        emit NewGreen(msg.sender, block.timestamp, _message, hasWon);
+        emit NewGreen(msg.sender, block.timestamp, _message);
     }
 
     /*
