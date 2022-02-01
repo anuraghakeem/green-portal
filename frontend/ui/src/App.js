@@ -216,7 +216,7 @@ export default function App() {
         <input type="text" onChange={handleTextChange} placeholder="What's your excuse?"></input>
         <br/>
         {loaderStatus?
-        <img src={Loader}></img>
+        <img src={Loader} className='loading-icon'></img>
         :<button className="waveButton" onClick={handlegreen}>
           Share Excuse
         </button>}
