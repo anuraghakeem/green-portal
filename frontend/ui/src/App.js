@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import greenPortalData from "./utils/GreenPortal.json";
+import Loader from './assets/Loader.gif'
 
 export default function App() {
   const [currentAccount, setCurrentAccount] = useState("");
@@ -9,11 +10,12 @@ export default function App() {
    * All state property to store all waves
    */
   const [allGreens, setAllGreens] = useState([]);
-  const contractAddress = "0x0d748FAf49F8900A5976b5A7Bc8022678c7Fe782";
+  const contractAddress = "0x53CB4256AC306720dAFf78B88eEc475a6CE59bB0";
   const contractABI = greenPortalData.abi;
   const [textMessgae, updateTextMessgae] = useState(
-    "I want to spread greens in the world"
+    "I am not well!"
   );
+  const [loaderStatus,setLoaderStatus] = useState(false)
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -174,9 +176,11 @@ export default function App() {
           gasLimit: 300000,
         });
         console.log("Mining...", greenTxn.hash);
+        setLoaderStatus(true)
 
         await greenTxn.wait();
         console.log("Mined -- ", greenTxn.hash);
+        setLoaderStatus(false)
 
         count = await greenPortalContract.getTotalGreens();
         console.log("Retrieved total greens count...", count.toNumber());
@@ -197,17 +201,26 @@ export default function App() {
   return (
     <div className="mainContainer">
       <div className="dataContainer">
-        <div className="header">Hi there!</div>
+        <div className="header">💻  Sorry But I Can't Turn On My Teams Camera Because...</div>
 
         <div className="bio">
-          I am Anurag and I am spreading greens throught the world. Connect your
-          Ethereum wallet and help me save the world!
+          Did you just wake up and join the meeting from bed and that annoying collegue/manager is asking you to turn on your camera? We feel for you! 
         </div>
-        <input type="text" onChange={handleTextChange}></input>
-
-        <button className="waveButton" onClick={handlegreen}>
-          Share a 🌿
-        </button>
+        <div className="bio">
+          Here are a bunch of excuses you can give. You're welcome!
+        </div>
+        <div className="bio">
+          Feel free to add your excuses too. The best ones will win some $eth as an airdrop in their wallet!
+        </div>
+        <br/>
+        <input type="text" onChange={handleTextChange} placeholder="What's your excuse?"></input>
+        <br/>
+        {loaderStatus?
+        <img src={Loader}></img>
+        :<button className="waveButton" onClick={handlegreen}>
+          Share Excuse
+        </button>}
+        <br />
         {/*
          * If there is no currentAccount render this button
          */}
@@ -220,6 +233,7 @@ export default function App() {
           .slice(0)
           .reverse()
           .map((green, index) => {
+            console.log("winner status",green.winner)
             return (
               <div
                 key={index}
